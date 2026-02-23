@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    tools {
+        // Must exist in Manage Jenkins → Global Tool Configuration
+        jdk 'jdk17'
+    }
+
     stages {
 
         stage('Build') {
@@ -20,10 +25,14 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
+        stage('Sonar-Report') {
             steps {
-                withSonarQubeEnv('sonar-local') {
-                    bat 'mvn clean verify sonar:sonar'
+                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+                    bat """
+                    mvn clean install org.sonarsource.scanner.maven:sonar-maven-plugin:4.0.0.4121:sonar ^
+                    -Dsonar.host.url=http://localhost:9000 ^
+                    -Dsonar.token=%SONAR_TOKEN%
+                    """
                 }
             }
         }
