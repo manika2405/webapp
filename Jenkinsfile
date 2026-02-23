@@ -25,16 +25,12 @@ pipeline {
             }
         }
 
-        stage('Sonar-Report') {
-            steps {
-                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
-                    bat """
-                    mvn clean install org.sonarsource.scanner.maven:sonar-maven-plugin:4.0.0.4121:sonar ^
-                    -Dsonar.host.url=http://localhost:9000 ^
-                    -Dsonar.token=%SONAR_TOKEN%
-                    """
-                }
-            }
+       stage('Sonar-Report') {
+    steps {
+        withCredentials([string(credentialsId: 'jenkins-token', variable: 'SONAR_TOKEN')]) {
+            bat "mvn clean install org.sonarsource.scanner.maven:sonar-maven-plugin:4.0.0.4121:sonar -Dsonar.host.url=http://localhost:9000 -Dsonar.token=%SONAR_TOKEN%"
         }
+    }
+}
     }
 }
