@@ -6,33 +6,26 @@ pipeline {
     }
 
     stages {
-
         stage('Build') {
             steps {
-                bat 'java -version'
-                bat 'mvn -version'
                 bat 'mvn -B -DskipTests clean package'
             }
         }
 
-        stage('Test') {
+        stage('Test') { 
             steps {
-                bat 'mvn test'
+                bat 'mvn test' 
             }
             post {
                 always {
-                    junit 'target/surefire-reports/*.xml'
+                    junit 'target/surefire-reports/*.xml' 
                 }
             }
         }
 
         stage('Sonar-Report') {
             steps {
-                bat '''
-                mvn clean install sonar:sonar ^
-                -Dsonar.host.url=http://localhost:9000 ^
-                -Dsonar.analysis.mode=publish
-                '''
+                bat 'mvn clean install sonar:sonar -Dsonar.host.url=http://localhost:9000 -Dsonar.analysis.mode=publish'
             }
         }
     }
