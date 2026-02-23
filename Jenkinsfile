@@ -24,9 +24,16 @@ pipeline {
         }
 
         stage('Sonar-Report') {
-            steps {
-                bat 'mvn clean install sonar:sonar -Dsonar.host.url=http://localhost:9000 -Dsonar.analysis.mode=publish'
-            }
-        }
+    environment {
+        SONAR_TOKEN = credentials('sonar-token')
+    }
+    steps {
+        bat '''
+        mvn clean install org.sonarsource.scanner.maven:sonar-maven-plugin:4.0.0.4121:sonar ^
+        -Dsonar.host.url=http://localhost:9000 ^
+        -Dsonar.token=%SONAR_TOKEN%
+        '''
+    }
+}
     }
 }
